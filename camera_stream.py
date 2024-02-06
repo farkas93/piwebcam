@@ -23,6 +23,7 @@ class CameraStream:
             with self.lock:
                 # Capture an image to a numpy array, then encode as JPEG
                 img = self.picam2.capture_array()
+                print(f"Got image: {img}")
                 is_success, buffer = cv2.imencode(".jpg", img)
                 if is_success:
                     self.output = buffer.tobytes()

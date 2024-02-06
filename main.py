@@ -2,6 +2,7 @@ import threading
 import logging
 import os
 
+from resolutions import *
 from http_server import ThreadedHTTPServer
 from streaming_handler import StreamingHandler, TestStreamingHandler
 from camera_stream import CameraStream
@@ -21,10 +22,10 @@ log_level_mapping = {
 
 logging.basicConfig(level=log_level_mapping.get(log_level, logging.WARNING))
 
-def run(framerate, handler_class=StreamingHandler):
+def run(framerate, resolution, handler_class=StreamingHandler):
 
     # Start the camera stream
-    camera_stream = CameraStream(framerate)
+    camera_stream = CameraStream(framerate, resolution)
     threading.Thread(target=camera_stream.capture_frames, daemon=True).start()
 
     # Start the web service
@@ -34,5 +35,6 @@ def run(framerate, handler_class=StreamingHandler):
     httpd.serve_forever()
 
 if __name__ == '__main__':
-    framerate = 25.0
-    run(framerate=framerate, handler_class=StreamingHandler)
+    framerate = 24.0
+    resolution = RES_360P
+    run(framerate=framerate, resolution=resolution, handler_class=StreamingHandler)

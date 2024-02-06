@@ -6,8 +6,9 @@ import logging
 from picamera2 import Picamera2
 
 class CameraStream:
-    def __init__(self, framerate):
+    def __init__(self, framerate: float, resolution: tuple):
         self.freq = 1/framerate
+        self.res = resolution
         self.picam2 = Picamera2()
         self.output = None
         self.lock = threading.Lock()
@@ -19,7 +20,7 @@ class CameraStream:
     def configure_camera(self):
         # Configure the camera here, e.g., resolution
         config = self.picam2.create_still_configuration()
-        config['main']['size'] = (640, 480)
+        config['main']['size'] = self.res
         self.picam2.configure(config)
         logging.info("CONFIG CAM")
 

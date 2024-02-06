@@ -1,4 +1,5 @@
 import time
+import logging
 
 from http.server import BaseHTTPRequestHandler
 
@@ -64,6 +65,7 @@ class StreamingHandler(BaseHTTPRequestHandler):
             try:
                 while True:
                     with camera_stream.lock:
+                        logging.info("capturing frame")
                         frame = camera_stream.output
                     self.wfile.write(b"--FRAME\r\n")
                     self.wfile.write(b"Content-Type: image/jpeg\r\n\r\n")

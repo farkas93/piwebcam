@@ -26,4 +26,4 @@ class CameraStream:
                 is_success, buffer = cv2.imencode(".jpg", img)
                 if is_success:
                     self.output = buffer.tobytes()
-            time.sleep(0.1)  # Adjust based on your framerate needs
+            time.sleep(10)  # Adjust based on your framerate needs

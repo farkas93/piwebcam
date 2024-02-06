@@ -62,6 +62,7 @@ class StreamingHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
+            logging.info("before capture camera")
             try:
                 while True:
                     with camera_stream.lock:

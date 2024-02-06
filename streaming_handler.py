@@ -65,15 +65,15 @@ class StreamingHandler(BaseHTTPRequestHandler):
             self.end_headers()
             try:
                 while True:
-                    logging.info("before capture camera")
-                    #with camera_stream.lock:
-                    frame = camera_stream.output
-                    logging.info(f"capturing frame {frame}")
-                    if frame is not None:
-                        self.wfile.write(b"--FRAME\r\n")
-                        self.wfile.write(b"Content-Type: image/jpeg\r\n\r\n")
-                        self.wfile.write(frame)
-                        self.wfile.write(b"\r\n")
+                    logging.debug("before capture camera")
+                    with camera_stream.lock:
+                        frame = camera_stream.output
+                        logging.debug(f"capturing frame {frame}")
+                        if frame is not None:
+                            self.wfile.write(b"--FRAME\r\n")
+                            self.wfile.write(b"Content-Type: image/jpeg\r\n\r\n")
+                            self.wfile.write(frame)
+                            self.wfile.write(b"\r\n")
                     time.sleep(0.1)  # Adjust based on the framerate
             except Exception as e:
                 logging.info("Stream stopped")

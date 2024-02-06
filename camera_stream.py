@@ -24,12 +24,12 @@ class CameraStream:
 
     def capture_frames(self):
         while True:
-            #with self.lock:
+            with self.lock:
             # Capture an image to a numpy array, then encode as JPEG
-            logging.info("CAPTURE CAM")
-            img = self.picam2.capture_array()
-            logging.info(f"Got image: {img}")
-            is_success, buffer = cv2.imencode(".jpg", img)
-            if is_success:
-                self.output = buffer.tobytes()
+                logging.debug("CAPTURE CAM")
+                img = self.picam2.capture_array()
+                logging.debug(f"Got image: {img}")
+                is_success, buffer = cv2.imencode(".jpg", img)
+                if is_success:
+                    self.output = buffer.tobytes()
             time.sleep(10)  # Adjust based on your framerate needs

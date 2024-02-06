@@ -74,7 +74,7 @@ class StreamingHandler(BaseHTTPRequestHandler):
                             self.wfile.write(b"Content-Type: image/jpeg\r\n\r\n")
                             self.wfile.write(frame)
                             self.wfile.write(b"\r\n")
-                    time.sleep(0.1)  # Adjust based on the framerate
+                    time.sleep(camera_stream.freq)  # Adjust based on the framerate
             except Exception as e:
                 logging.info("Stream stopped")
                 logging.error(e)

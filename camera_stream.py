@@ -6,7 +6,8 @@ import logging
 from picamera2 import Picamera2
 
 class CameraStream:
-    def __init__(self):
+    def __init__(self, framerate):
+        self.freq = 1/framerate
         self.picam2 = Picamera2()
         self.output = None
         self.lock = threading.Lock()
@@ -32,4 +33,4 @@ class CameraStream:
                 is_success, buffer = cv2.imencode(".jpg", img)
                 if is_success:
                     self.output = buffer.tobytes()
-            time.sleep(0.1)  # Adjust based on your framerate needs
+            time.sleep(self.freq)  # Adjust based on your framerate needs

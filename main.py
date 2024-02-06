@@ -21,7 +21,8 @@ log_level_mapping = {
 
 logging.basicConfig(level=log_level_mapping.get(log_level, logging.WARNING))
 
-def run(handler_class=StreamingHandler):
+def run(framerate, handler_class=StreamingHandler):
+
     # Start the camera stream
     camera_stream = CameraStream()
     threading.Thread(target=camera_stream.capture_frames, daemon=True).start()
@@ -33,4 +34,5 @@ def run(handler_class=StreamingHandler):
     httpd.serve_forever()
 
 if __name__ == '__main__':
-    run(handler_class=StreamingHandler)
+    framerate = 25.0
+    run(framerate=framerate, handler_class=StreamingHandler)

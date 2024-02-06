@@ -16,4 +16,4 @@ def run(handler_class=StreamingHandler):
     httpd.serve_forever()
 
 if __name__ == '__main__':
-    run(handler_class=TestStreamingHandler)
+    run(handler_class=StreamingHandler)

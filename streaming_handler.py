@@ -15,10 +15,6 @@ PAGE = """\
 """
 
 class TestStreamingHandler(BaseHTTPRequestHandler):
-
-    def __init__(self, camera):
-        super()
-        self.cam = camera
         
     def do_GET(self):
         if self.path == '/':
@@ -50,11 +46,8 @@ class TestStreamingHandler(BaseHTTPRequestHandler):
 
 class StreamingHandler(BaseHTTPRequestHandler):
 
-    def __init__(self, camera):
-        super()
-        self.cam = camera
-
     def do_GET(self):
+        camera_stream = self.server.camera_stream 
         if self.path == '/':
             self.send_response(301)
             self.send_header('Location', '/index.html')
@@ -70,8 +63,8 @@ class StreamingHandler(BaseHTTPRequestHandler):
             self.end_headers()
             try:
                 while True:
-                    with self.cam.lock:
-                        frame = self.cam.output
+                    with camera_stream.lock:
+                        frame = camera_stream.output
                     self.wfile.write(b"--FRAME\r\n")
                     self.wfile.write(b"Content-Type: image/jpeg\r\n\r\n")
                     self.wfile.write(frame)

@@ -16,6 +16,7 @@ class CameraStream:
     def configure_camera(self):
         # Configure the camera here, e.g., resolution
         config = self.picam2.create_still_configuration()
+        config['main']['size'] = (640, 480)
         self.picam2.configure(config)
 
     def capture_frames(self):

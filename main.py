@@ -1,8 +1,24 @@
 import threading
+import logging
 
 from http_server import ThreadedHTTPServer
 from streaming_handler import StreamingHandler, TestStreamingHandler
 from camera_stream import CameraStream
+
+try:
+    log_level = os.environ['LOG_LEVEL'].upper()
+except KeyError:
+    log_level = 'INFO'
+
+log_level_mapping = {
+    'DEBUG': logging.DEBUG,
+    'INFO': logging.INFO,
+    'WARNING': logging.WARNING,
+    'ERROR': logging.ERROR,
+    'CRITICAL': logging.CRITICAL
+}
+
+logging.basicConfig(level=log_level_mapping.get(log_level, logging.WARNING))
 
 def run(handler_class=StreamingHandler):
     # Start the camera stream

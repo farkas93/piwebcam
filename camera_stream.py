@@ -1,10 +1,9 @@
 import time
 import cv2
 import threading
+import logging
 
 from picamera2 import Picamera2
-
-
 
 class CameraStream:
     def __init__(self):
@@ -24,7 +23,7 @@ class CameraStream:
             with self.lock:
                 # Capture an image to a numpy array, then encode as JPEG
                 img = self.picam2.capture_array()
-                print(f"Got image: {img}")
+                logging.info(f"Got image: {img}")
                 is_success, buffer = cv2.imencode(".jpg", img)
                 if is_success:
                     self.output = buffer.tobytes()

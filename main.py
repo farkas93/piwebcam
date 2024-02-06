@@ -4,8 +4,6 @@ from http_server import ThreadedHTTPServer
 from streaming_handler import StreamingHandler, TestStreamingHandler
 from camera_stream import CameraStream
 
-
-
 def run(handler_class=StreamingHandler):
     # Start the camera stream
     camera_stream = CameraStream()
@@ -18,4 +16,4 @@ def run(handler_class=StreamingHandler):
     httpd.serve_forever()
 
 if __name__ == '__main__':
-    run()
+    run(handler_class=TestStreamingHandler)

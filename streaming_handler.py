@@ -67,8 +67,8 @@ class StreamingHandler(BaseHTTPRequestHandler):
                 while True:
                     logging.info("before capture camera")
                     #with camera_stream.lock:
-                    logging.info("capturing frame")
                     frame = camera_stream.output
+                    logging.info(f"capturing frame {frame}")
                     if frame is not None:
                         self.wfile.write(b"--FRAME\r\n")
                         self.wfile.write(b"Content-Type: image/jpeg\r\n\r\n")

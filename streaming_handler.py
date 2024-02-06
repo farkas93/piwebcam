@@ -43,7 +43,8 @@ class TestStreamingHandler(BaseHTTPRequestHandler):
                     self.wfile.write(b'\r\n')
                     time.sleep(0.1)  # Adjust based on the framerate
             except Exception as e:
-                print("Stream stopped")
+                logging.info("Stream stopped")
+                logging.error(e)
 
 class StreamingHandler(BaseHTTPRequestHandler):
 
@@ -74,4 +75,5 @@ class StreamingHandler(BaseHTTPRequestHandler):
                     self.wfile.write(b"\r\n")
                     time.sleep(0.1)  # Adjust based on the framerate
             except Exception as e:
-                print("Stream stopped")
+                logging.info("Stream stopped")
+                logging.error(e)

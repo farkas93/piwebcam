@@ -11,7 +11,9 @@ class CameraStream:
         self.output = None
         self.lock = threading.Lock()
         self.configure_camera()
+        self.picam2.start()
         logging.info("INIT CAM")
+
 
     def configure_camera(self):
         # Configure the camera here, e.g., resolution

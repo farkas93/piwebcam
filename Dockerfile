@@ -3,7 +3,7 @@ FROM balenalib/rpi-alpine-python
 WORKDIR /root
 
 
-RUN apk add --no-cache cmake build-essential
+RUN apk add --no-cache cmake build-base
 RUN pip install --upgrade pip
 
 COPY requirements.txt /root/requirements.txt

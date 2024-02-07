@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi0-2w-64-alpine-python
+FROM balenalib/rpi-alpine-python
 
 WORKDIR /root
 RUN pip install --upgrade pip

@@ -2,10 +2,10 @@ import threading
 import logging
 import os
 
-from resolutions import *
-from http_server import ThreadedHTTPServer
-from streaming_handler import StreamingHandler, TestStreamingHandler
-from camera_stream import CameraStream
+from camera_streaming.resolutions import *
+from camera_streaming.http_server import ThreadedHTTPServer
+from camera_streaming.streaming_handler import StreamingHandler, TestStreamingHandler
+from camera_streaming.camera_stream import CameraStream
 
 try:
     log_level = os.environ['LOG_LEVEL'].upper()

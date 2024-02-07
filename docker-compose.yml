@@ -1,0 +1,10 @@
+version: '3.8'
+services: 
+  mjpeg-cam:
+      container_name: mjpeg-cam
+      build: .
+      environment:
+        - LOG_LEVEL=INFO
+      restart: unless-stopped
+      ports:
+        - "8000:8000"

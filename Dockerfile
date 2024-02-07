@@ -1,4 +1,4 @@
-FROM balenalib/rpi-alpine-python
+FROM python:3.12-alpine3.18
 
 WORKDIR /root
 

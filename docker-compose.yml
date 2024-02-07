@@ -3,8 +3,11 @@ services:
   mjpeg-cam:
       container_name: mjpeg-cam
       build: .
+      volumes:
+        - /opt/vc:/opt/vc
       environment:
         - LOG_LEVEL=INFO
+        - LD_LIBRARY_PATH=/opt/vc/lib
       restart: unless-stopped
       ports:
         - "8000:8000"

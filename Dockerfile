@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi0-2w-64-alpine-python:14.21-3.12
+FROM balenalib/raspberry-pi-debian-python
 
 WORKDIR /root
 

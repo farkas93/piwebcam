@@ -6,6 +6,7 @@ RUN apt update
 RUN apt upgrade
 
 RUN apt install -y python3-picamera2 --no-install-recommends
+RUN apt install python3-opencv
 
 COPY requirements.txt /root/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt

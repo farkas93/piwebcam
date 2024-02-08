@@ -1,4 +1,4 @@
-FROM resin/raspberry-pi-python:3
+FROM balenalib/raspberrypi0-2w-64-python
 
 WORKDIR /root
 

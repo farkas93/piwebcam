@@ -1,2 +1,3 @@
+libcamera
 picamera2
 opencv-python

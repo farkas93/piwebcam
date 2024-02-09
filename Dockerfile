@@ -5,7 +5,7 @@ WORKDIR /root
 RUN apt-get update
 RUN apt-get upgrade
 
-RUN apt-get install build-essential libcap-dev libgl1-mesa-glx fmpeg libsm6 libxext6 -y
+RUN apt-get install build-essential libcap-dev libgl1-mesa-glx ffmpeg libsm6 libxext6 -y
 
 COPY requirements.txt /root/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt

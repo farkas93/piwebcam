@@ -5,6 +5,8 @@ WORKDIR /root
 RUN apt-get update
 RUN apt-get upgrade
 
+RUN apt-get install build-essentials
+
 COPY requirements.txt /root/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 

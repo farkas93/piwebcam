@@ -6,7 +6,7 @@ RUN apt-get update
 RUN apt-get upgrade
 
 RUN apt-get install build-essential libcap-dev libgl1-mesa-glx ffmpeg libsm6 libxext6 -y
-RUN apt-get instal python3-libcamera
+RUN apt-get install python3-libcamera
 
 COPY requirements.txt /root/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt

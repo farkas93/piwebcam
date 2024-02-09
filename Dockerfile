@@ -5,7 +5,7 @@ WORKDIR /root
 RUN apt-get update
 RUN apt-get upgrade
 
-RUN apt-get install build-essential
+RUN apt-get install build-essential libcap-dev
 
 COPY requirements.txt /root/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt

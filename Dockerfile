@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi0-2w-64-python
+FROM balenalib/raspberrypi0-2w-64-debian-python
 
 WORKDIR /root
 

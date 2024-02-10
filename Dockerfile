@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi0-2w-64-debian-python
+FROM balenalib/raspberrypi0-2w-64-debian-python:bookworm-build
 
 WORKDIR /root
 

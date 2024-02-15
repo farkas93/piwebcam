@@ -12,7 +12,7 @@ RUN apt update && apt -y upgrade
 RUN apt update && apt install -y --no-install-recommends \
          python3-pip \
      && apt-get clean \
-     && apt-get autoremove \
+     && apt-get autoremove
 
 RUN apt install -y python3-picamera2
 WORKDIR /root

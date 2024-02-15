@@ -11,12 +11,12 @@ RUN apt update && apt -y upgrade
 # Install dependencies
 RUN apt update && apt install -y --no-install-recommends \
          python3-pip \
-         python3-picamera2 \
      && apt-get clean \
      && apt-get autoremove \
      && rm -rf /var/cache/apt/archives/* \
      && rm -rf /var/lib/apt/lists/*
 
+RUN apt install -y python3-picamera2
 WORKDIR /root
 
 COPY requirements.txt /root/requirements.txt

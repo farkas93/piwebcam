@@ -1,24 +1,9 @@
-FROM python:3.11.8-bullseye
+FROM balenalib/raspberrypi3-64-python
 
-RUN apt update && apt install -y --no-install-recommends gnupg
-
-# Add RPI sources to apt
-RUN echo "deb http://archive.raspberrypi.org/debian/ bullseye main" > /etc/apt/sources.list.d/raspi.list \
-  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 82B129927FA3303E
-
-RUN apt update && apt -y upgrade
-
-# Install dependencies
-RUN apt update && apt install -y \
-         python3-pip \
-     && apt-get clean \
-     && apt-get autoremove
-
-RUN apt install -y python3-picamera2 --no-install-recommends
 WORKDIR /root
 
-COPY requirements.txt /root/requirements.txt
-RUN pip install -r requirements.txt
+RUN install_packages python3-picamera2
+RUN install_packages python3-opencv
 
 # Run the app
 COPY camera_streaming /root/camera_streaming

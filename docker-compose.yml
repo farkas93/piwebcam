@@ -3,7 +3,7 @@ services:
   mjpeg-cam:
       container_name: mjpeg-cam
       build: .
-      volumes:
+      #volumes:
         #- /run/udev:/run/udev:ro
         #- /opt/vc:/opt/vc
       environment:

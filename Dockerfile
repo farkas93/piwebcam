@@ -9,12 +9,12 @@ RUN echo "deb http://archive.raspberrypi.org/debian/ bullseye main" > /etc/apt/s
 RUN apt update && apt -y upgrade
 
 # Install dependencies
-RUN apt update && apt install -y --no-install-recommends \
+RUN apt update && apt install -y \
          python3-pip \
      && apt-get clean \
      && apt-get autoremove
 
-RUN apt install -y python3-picamera2
+RUN apt install -y python3-picamera2 --no-install-recommends
 WORKDIR /root
 
 COPY requirements.txt /root/requirements.txt

@@ -4,6 +4,7 @@ services:
       container_name: mjpeg-cam
       build: .
       volumes:
+        #- /run/udev:/run/udev:ro
         - /opt/vc:/opt/vc
       environment:
         - LOG_LEVEL=INFO

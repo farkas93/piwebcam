@@ -1,18 +1,29 @@
-FROM balenalib/raspberrypi0-2w-64-debian-python:bookworm-build
+FROM python:3.11.8-bullseye
+
+RUN apt update && apt install -y --no-install-recommends gnupg
+
+# Add RPI sources to apt
+RUN echo "deb http://archive.raspberrypi.org/debian/ bullseye main" > /etc/apt/sources.list.d/raspi.list \
+  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 82B129927FA3303E
+
+RUN apt update && apt -y upgrade
+
+# Install dependencies
+RUN apt update && apt install -y --no-install-recommends \
+         python3-pip \
+         python3-picamera2 \
+     && apt-get clean \
+     && apt-get autoremove \
+     && rm -rf /var/cache/apt/archives/* \
+     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root
-
-RUN apt-get update
-RUN apt-get upgrade
-
-RUN apt-get install build-essential libcap-dev libgl1-mesa-glx ffmpeg libsm6 libxext6 -y
-RUN apt-get install python3-libcamera
 
 COPY requirements.txt /root/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Run the app
 COPY camera_streaming /root/camera_streaming
 COPY main.py /root/main.py
-
 
 CMD [ "python", "main.py" ]

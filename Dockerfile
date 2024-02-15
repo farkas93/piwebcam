@@ -18,7 +18,7 @@ RUN apt install -y python3-picamera2
 WORKDIR /root
 
 COPY requirements.txt /root/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Run the app
 COPY camera_streaming /root/camera_streaming

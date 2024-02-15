@@ -5,7 +5,7 @@ services:
       build: .
       volumes:
         #- /run/udev:/run/udev:ro
-        - /opt/vc:/opt/vc
+        #- /opt/vc:/opt/vc
       environment:
         - LOG_LEVEL=INFO
         - LD_LIBRARY_PATH=/opt/vc/lib

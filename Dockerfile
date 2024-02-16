@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi3-64:latest
+FROM balenalib/raspberrypi3-64:latest AS raspbian-python-3-11
 
 WORKDIR /root
 
@@ -16,6 +16,8 @@ WORKDIR /root
 # Cleanup
 RUN rm -r /root/Python-3.11.3
 RUN rm Python-3.11.3.tgz
+
+FROM raspbian-python-3-11
 
 # Install the python packages from the repo
 RUN pip install --upgrade pip

@@ -1,2 +1,2 @@
-picamera2==0.3.16
+picamera2==0.3.12
 opencv-python-headless==4.9.0.80

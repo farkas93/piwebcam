@@ -1,14 +1,15 @@
 version: '3.8'
-services: 
+services:
   mjpeg-cam:
       container_name: mjpeg-cam
       build: .
-      #volumes:
-        #- /run/udev:/run/udev:ro
-        #- /opt/vc:/opt/vc
+      volumes:
+        - /run/udev:/run/udev:ro
+        - /usr/lib:/usr/lib
       environment:
         - LOG_LEVEL=INFO
-        - LD_LIBRARY_PATH=/opt/vc/lib
+        - LD_LIBRARY_PATH=/usr/lib
       restart: unless-stopped
+      privileged: true
       ports:
         - "8000:8000"

@@ -12,12 +12,16 @@ RUN ./configure --enable-optimizations
 #adjust the number to be the number of processors on your pi
 RUN make -j 4
 
+WORKDIR /root
+# Cleanup
+RUN rm -r /root/Python-3.11.3
+RUN rm Python-3.11.3.tgz
+
 # Install the python packages from the repo
+RUN pip install --upgrade pip
 RUN install_packages python3-picamera2
 RUN install_packages python3-opencv
-RUN pip install --upgrade pip
 
-WORKDIR /root
 COPY requirements.txt /root/requirements.txt
 RUN pip install -r requirements.txt
 

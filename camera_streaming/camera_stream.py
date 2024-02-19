@@ -22,8 +22,8 @@ class CameraOutput(io.BufferedIOBase):
         self.face_detection = face_detection
         if face_detection:
             cwd = os.getcwd()
-            modelFile = cwd + "resnet.caffemodel"
-            configFile = cwd + "deploy.prototxt"
+            modelFile = cwd + "/resnet.caffemodel"
+            configFile = cwd + "/deploy.prototxt"
             self.net = cv2.dnn.readNetFromCaffe(configFile, modelFile)
             logging.info(f"initialized model {modelFile}")
 

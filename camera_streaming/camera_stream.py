@@ -1,5 +1,6 @@
 import time
 import io
+import os
 import cv2
 import numpy as np
 import threading
@@ -20,8 +21,9 @@ class CameraOutput(io.BufferedIOBase):
         self.edge_detection = edge_detection
         self.face_detection = face_detection
         if face_detection:
-            modelFile = "resnet.caffemodel"
-            configFile = "deploy.prototxt"
+            cwd = os.getcwd()
+            modelFile = cwd + "resnet.caffemodel"
+            configFile = cwd + "deploy.prototxt"
             self.net = cv2.dnn.readNetFromCaffe(configFile, modelFile)
             logging.info(f"initialized model {modelFile}")
 

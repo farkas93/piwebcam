@@ -83,7 +83,7 @@ class CameraStream:
 
         self.picam2 = Picamera2()
         self.configure_camera()
-        self.output = CameraOutput(edge_detection)
+        self.output = CameraOutput(edge_detection, face_detection)
         self.picam2.start_recording(JpegEncoder(), FileOutput(self.output))
         logging.info("STARTING CAM")
 

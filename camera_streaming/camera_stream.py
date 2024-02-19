@@ -14,28 +14,55 @@ from picamera2.outputs import FileOutput
 
 
 class CameraOutput(io.BufferedIOBase):
-    def __init__(self, edge_detection=False, face_detection=False):
+    def __init__(self, edge_detection=False, face_detection=False, use_resnet=False):
         self.frame = None
         self.condition = Condition()
         self.edge_detection = edge_detection
         self.face_detection = face_detection
+        self.use_resnet = use_resnet
         if face_detection:
-            cwd = os.getcwd()
-            modelFile = cwd + "/resnet.caffemodel"
-            configFile = cwd + "/deploy.prototxt"
-            self.net = cv2.dnn.readNetFromCaffe(configFile, modelFile)
-            logging.info(f"initialized model {modelFile}")
+            if use_resnet:
+                cwd = os.getcwd()
+                modelFile = cwd + "/resnet.caffemodel"
+                configFile = cwd + "/deploy.prototxt"
+                self.net = cv2.dnn.readNetFromCaffe(configFile, modelFile)
+                logging.info(f"initialized model {modelFile}")
+            else:
+                self.cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
 
 
     def write(self, buf):
         if self.face_detection:
-            buf = self.resnet_face_detection(buf)
+            if self.use_resnet:
+                buf = self.resnet_face_detection(buf)
+            else:
+                self.cascade_face_detection(buf)
         if self.edge_detection:
             buf = self.canny_edge_detector(buf)
         with self.condition:
             self.frame = buf
             self.condition.notify_all()
     
+    def cascade_face_detection(self, buf):
+
+        # Convert the image buffer to a numpy array
+        img_array = np.frombuffer(buf, dtype=np.uint8)
+        # Decode the image array into an image
+        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+        # Convert the image to grayscale
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # Detect faces in the image
+        faces = self.cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+
+        # Draw rectangles around the faces
+        for (x, y, w, h) in faces:
+            cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
+        
+        _, buf = cv2.imencode('.jpg', img)
+        return buf.tobytes()
+
     def resnet_face_detection(self,buf):
 
         # Convert the image buffer to a numpy array

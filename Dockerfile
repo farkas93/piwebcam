@@ -33,6 +33,8 @@ COPY requirements.txt /root/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY camera_streaming /root/camera_streaming
+COPY facial_recognition/res10_300x300_ssd_iter_140000.caffemodel /root/camera_streaming/resnet.caffemodel
+COPY facial_recognition/deploy.prototxt.txt /root/camera_streaming/deploy.prototxt
 COPY main.py /root/main.py
 
 CMD [ "python3", "main.py" ]

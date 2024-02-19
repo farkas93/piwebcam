@@ -1,0 +1,4 @@
+[submodule "facial_recognition"]
+	path = facial_recognition
+	url = https://github.com/Shiva486/facial_recognition.git
+	branch = main

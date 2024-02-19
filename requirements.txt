@@ -1,0 +1,4 @@
+scipy
+scikit-image
+dlib
+ubidots==1.6.6

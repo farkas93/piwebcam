@@ -21,15 +21,16 @@ class CameraOutput(io.BufferedIOBase):
         self.face_detection = face_detection
         self.use_resnet = use_resnet
         if face_detection:
+            cwd = os.getcwd()
             if use_resnet:
-                cwd = os.getcwd()
-                modelFile = cwd + "/resnet.caffemodel"
-                configFile = cwd + "/deploy.prototxt"
+                modelFile = cwd + "/resnet/resnet.caffemodel"
+                configFile = cwd + "/resnet/deploy.prototxt"
                 self.net = cv2.dnn.readNetFromCaffe(configFile, modelFile)
-                logging.info(f"initialized model {modelFile}")
             else:
-                self.cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+                modelFile = cwd + '/cascades/haarcascade_frontalface_default.xml'
+                self.cascade = cv2.CascadeClassifier(modelFile)
 
+            logging.info(f"initialized model {modelFile}")
 
 
     def write(self, buf):

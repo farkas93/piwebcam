@@ -42,8 +42,10 @@ COPY requirements.txt /root/requirements.txt
 RUN pip install -r requirements.txt
 
 COPY camera_streaming /root/camera_streaming
-COPY facial_recognition/res10_300x300_ssd_iter_140000.caffemodel /root/resnet.caffemodel
-COPY facial_recognition/deploy.prototxt.txt /root/deploy.prototxt
+COPY facial_recognition/res10_300x300_ssd_iter_140000.caffemodel /root/resnet/resnet.caffemodel
+COPY facial_recognition/deploy.prototxt.txt /root/resnet/deploy.prototxt
+COPY facial_recognition/cascades /root/cascades
+COPY facial_recognition/mobilenet_ssd /root/mobilenet_ssd
 COPY main.py /root/main.py
 
 CMD [ "python3", "main.py" ]

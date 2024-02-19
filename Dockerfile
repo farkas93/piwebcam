@@ -1,34 +1,48 @@
-FROM balenalib/raspberrypi3-64:latest AS raspbian-python-3-11
+FROM debian:bullseye AS bullseye-python
 
-WORKDIR /root
+RUN apt update && apt install -y --no-install-recommends gnupg
 
-# Install correct python version. In my case 3.11. Has to be the same as on your host
-RUN install_packages build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev
-RUN wget https://www.python.org/ftp/python/3.11.3/Python-3.11.3.tgz
-RUN tar -xvf Python-3.11.3.tgz
+RUN echo "deb http://archive.raspberrypi.org/debian/ bullseye main" > /etc/apt/sources.list.d/raspi.list \
+  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 82B129927FA3303E
 
-WORKDIR /root/Python-3.11.3
-RUN ./configure --enable-optimizations
-#adjust the number to be the number of processors on your pi
-RUN make -j 4
+RUN apt update && apt -y upgrade
 
-WORKDIR /root
-# Cleanup
-RUN rm -r /root/Python-3.11.3
-RUN rm Python-3.11.3.tgz
+RUN apt update && apt install -y --no-install-recommends \
+         python3-pip \
+         python3-picamera2 \
+     && apt-get clean \
+     && apt-get autoremove \
+     && rm -rf /var/cache/apt/archives/* \
+     && rm -rf /var/lib/apt/lists/*
 
-FROM raspbian-python-3-11
+FROM bullseye-python
 
-# Install the python packages from the repo
-RUN pip install --upgrade pip
-RUN install_packages python3-picamera2
-RUN install_packages python3-opencv
+# Set the working directory
+WORKDIR /app
 
-COPY requirements.txt /root/requirements.txt
-RUN pip install -r requirements.txt
+# Copy the requirements file
+COPY requirements.txt .
 
-# Run the app
-COPY camera_streaming /root/camera_streaming
-COPY main.py /root/main.py
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD [ "python", "main.py" ]
+# Copy the Python files
+COPY pi_camera_in_docker /app/pi_camera_in_docker
+
+# Set the entry point
+CMD ["python3", "/app/pi_camera_in_docker/main.py"]
+
+# # Install the python packages from the repo
+# RUN install_packages python3-pip
+# RUN pip install --upgrade pip
+# RUN install_packages python3-picamera2
+# RUN install_packages python3-opencv
+
+# COPY requirements.txt /root/requirements.txt
+# RUN pip install -r requirements.txt
+
+# # Run the app
+# COPY camera_streaming /root/camera_streaming
+# COPY main.py /root/main.py
+
+# CMD [ "python", "main.py" ]

@@ -55,3 +55,6 @@ chmod +x enable_virtual_webcam.sh
 ./enable_virtual_webcam.sh
 ```
 
+## Future work
+
+I am planning to implement face tracking and to combine it with a little mobile robotic manipulator. The idea is to have a little robot as webcam which will track and follow your face. Let's see how it will turn out. That is also the reason why i included face detection support via open-cv.

@@ -23,6 +23,7 @@ class CameraOutput(io.BufferedIOBase):
             modelFile = "resnet.caffemodel"
             configFile = "deploy.prototxt"
             self.net = cv2.dnn.readNetFromCaffe(configFile, modelFile)
+            logging.info(f"initialized model {modelFile}")
 
 
     def write(self, buf):
@@ -56,6 +57,7 @@ class CameraOutput(io.BufferedIOBase):
                 y = startY - 10 if startY - 10 > 10 else startY + 10
                 cv2.rectangle(buf, (startX, startY), (endX, endY), (0, 255, 0), 2)
                 cv2.putText(buf, text, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 2)
+        return buf.tobytes()
 
     def canny_edge_detector(self,buf):
         # Convert the image buffer to a numpy array

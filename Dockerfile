@@ -1,9 +1,22 @@
-FROM balenalib/raspberrypi3-64-python AS bullseye-picamera2
+FROM debian:bookworm AS bookworm-picamera2
 # Build the OS.
 
-RUN install_packages python3-picamera2
+RUN apt update && apt install -y --no-install-recommends gnupg
 
-FROM bullseye-picamera2
+RUN echo "deb http://archive.raspberrypi.org/debian/ bookworm main" > /etc/apt/sources.list.d/raspi.list \
+  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 82B129927FA3303E
+
+RUN apt update && apt -y upgrade
+
+RUN apt update && apt install -y --no-install-recommends \
+         python3-pip \
+         python3-picamera2 \
+     && apt-get clean \
+     && apt-get autoremove \
+     && rm -rf /var/cache/apt/archives/* \
+     && rm -rf /var/lib/apt/lists/*
+
+FROM bookworm-picamera2
 # Copy the code and start the app
 
 WORKDIR /root

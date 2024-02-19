@@ -30,7 +30,7 @@ def main():
 def run(framerate, resolution, handler_class=StreamingHandler):
 
     # Start the camera stream
-    camera_stream = CameraStream(framerate, resolution, edge_detection=False)
+    camera_stream = CameraStream(framerate, resolution, model_type=None)
 
     # Start the web service
     server_address = ('', 8000)

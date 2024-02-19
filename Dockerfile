@@ -11,7 +11,7 @@ RUN apt update && apt -y upgrade
 RUN apt install -y --no-install-recommends \
          python3-pip \
          python3-picamera2
-         
+
 RUN apt install -y --no-install-recommends python3-opencv
          
 # Cleanup container
@@ -22,9 +22,12 @@ RUN  apt-get clean \
     #  && rm -rf /var/lib/apt/lists/*
 
 FROM bookworm-picamera2
-# Copy the code and start the app
+# Copy the code, install python packages and start the app
 
 WORKDIR /root
+
+# Enable installation of pip packages within python 3.11
+RUN rm /usr/lib/python3.11/EXTERNALLY-MANAGED
 
 COPY requirements.txt /root/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt

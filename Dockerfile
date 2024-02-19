@@ -16,7 +16,7 @@ RUN apt update && apt install -y --no-install-recommends \
      && rm -rf /var/cache/apt/archives/* \
      && rm -rf /var/lib/apt/lists/*
 
-#RUN apt install -y python3-opencv
+RUN apt install -y --no-install-recommends python3-opencv
 
 FROM bookworm-picamera2
 # Copy the code and start the app

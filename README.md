@@ -13,6 +13,7 @@ The main difference is that he is basing his container on bullseye.
 ## Run this project on your PI
 
 Simply clone the repo to your pi. Make sure to have docker together with docker compose installed.
+Use the scripts `init_submodules.sh`to initialize the facial recognition submodule (required by the Dockerfile). Just to be sure also execute `pull_submodules.sh`.
 Use `docker compose up -d` to start the service.
 
 ## Use it as webcam on your machine

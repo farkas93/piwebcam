@@ -1,4 +1,5 @@
 FROM debian:bullseye AS bullseye-picamera2
+# Build the OS.
 
 RUN apt update && apt install -y --no-install-recommends gnupg
 
@@ -16,33 +17,14 @@ RUN apt update && apt install -y --no-install-recommends \
      && rm -rf /var/lib/apt/lists/*
 
 FROM bullseye-picamera2
+# Copy the code and start the app
 
-# Set the working directory
 WORKDIR /root
 
-# Copy the requirements file
-COPY requirements.txt .
-
-# Install Python dependencies
+COPY requirements.txt /root/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the Python files
-COPY pi_camera_in_docker /root/pi_camera_in_docker
+COPY camera_streaming /root/camera_streaming
+COPY main.py /root/main.py
 
-# Set the entry point
-CMD ["python3", "/root/pi_camera_in_docker/main.py"]
-
-# # Install the python packages from the repo
-# RUN install_packages python3-pip
-# RUN pip install --upgrade pip
-# RUN install_packages python3-picamera2
-# RUN install_packages python3-opencv
-
-# COPY requirements.txt /root/requirements.txt
-# RUN pip install -r requirements.txt
-
-# # Run the app
-# COPY camera_streaming /root/camera_streaming
-# COPY main.py /root/main.py
-
-# CMD [ "python", "main.py" ]
+CMD [ "python", "main.py" ]

@@ -14,15 +14,15 @@ RUN apt install -y --no-install-recommends \
 
 RUN apt install -y --no-install-recommends python3-opencv
 
-# Enable installation of pip packages within python 3.11
-RUN rm /usr/lib/python3.11/EXTERNALLY-MANAGED
-
 # Cleanup container
 RUN  apt-get clean \
      && apt-get autoremove 
     # Include again once development phase on this repo is finished.
     #  && rm -rf /var/cache/apt/archives/* \
     #  && rm -rf /var/lib/apt/lists/*
+
+# Enable installation of pip packages within python 3.11
+RUN rm /usr/lib/python3.11/EXTERNALLY-MANAGED
 
 FROM bookworm-picamera2
 # Copy the code, install python packages and start the app

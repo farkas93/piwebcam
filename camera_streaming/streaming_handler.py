@@ -49,7 +49,7 @@ class TestStreamingHandler(BaseHTTPRequestHandler):
 class StreamingHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        camera_stream = self.server.camera_stream 
+        camera_output = self.server.camera_stream.output
         if self.path == '/':
             self.send_response(301)
             self.send_header('Location', '/index.html')
@@ -61,20 +61,26 @@ class StreamingHandler(BaseHTTPRequestHandler):
             self.wfile.write(PAGE.encode('utf-8'))
         elif self.path == '/stream.mjpg':
             self.send_response(200)
-            self.send_header('Content-type', 'multipart/x-mixed-replace; boundary=FRAME')
+            self.send_header('Age', 0)
+            self.send_header('Cache-Control', 'no-cache, private')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
             try:
                 while True:
-                    logging.debug("before capture camera")
-                    with camera_stream.lock:
-                        frame = camera_stream.output
-                        logging.debug(f"capturing frame {frame}")
-                        if frame is not None:
-                            self.wfile.write(b"--FRAME\r\n")
-                            self.wfile.write(b"Content-Type: image/jpeg\r\n\r\n")
-                            self.wfile.write(frame)
-                            self.wfile.write(b"\r\n")
-                    time.sleep(camera_stream.freq)  # Adjust based on the framerate
+                    with camera_output.condition:
+                        camera_output.condition.wait()
+                        frame = camera_output.frame
+                    self.wfile.write(b'--FRAME\r\n')
+                    self.send_header('Content-Type', 'image/jpeg')
+                    self.send_header('Content-Length', len(frame))
+                    self.end_headers()
+                    self.wfile.write(frame)
+                    self.wfile.write(b'\r\n')
             except Exception as e:
-                logging.info("Stream stopped")
-                logging.error(e)
+                logging.warning(
+                    'Removed streaming client %s: %s',
+                    self.client_address, str(e))
+        else:
+            self.send_error(404)
+            self.end_headers()

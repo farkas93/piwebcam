@@ -6,3 +6,6 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     def __init__(self, server_address, handler_class, camera_stream):
         super().__init__(server_address, handler_class)
         self.camera_stream = camera_stream
+        self.fallow_reuse_address = True
+        self.daemon_threads = True
+    

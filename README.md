@@ -1,4 +1,8 @@
-# Picamera 2 for Bookworm 64-bit with Docker
+# PI Webcam
+
+This is a small project to let you use your rpi with your rpi camera module as a virtual webcam.
+
+## Picamera 2 for Bookworm 64-bit with Docker
 
 I set up a docker container with the latest debian bookworm for using it with picamera2 and open-cv.
 
@@ -8,23 +12,13 @@ The main diference is that he is basing his container on bullseye.
 
 ## Run this project on your PI
 
+Simply clone the repo to your pi. Make sure to have docker together with docker compose installed.
+Use `docker compose up -d` to start the service.
 
+## Use it as webcam on your machine
+So far I only explored this for linux machines. 
 
-## Use it on as Webcam on your machine
-
-
-### No blabla
-If you just want to use it, do following steps:
-1. Create a copy of the `enable_virtual_webcam.sh.template` file and rename it to `enable_virtual_webcam.sh`.
-2. Adjust the `STREAM_URL="http://MY.IP.AD.RESS:8000/stream.mjpg"` in the `enable_virtual_webcam.sh` script to match the IP address of the RPI to which your camera is physically connected.
-3. And then run the bash script:
-```
-chmod +x enable_virtual_webcam.sh
-./enable_virtual_webcam.sh
-```
-
-### How it is done
-
+### Prerequisites
 The bash script is essentially following these steps.
 
 Install `v4l2loopbac`:
@@ -50,3 +44,14 @@ In the end stream your device with:
 ```
 ffmpeg -i http://MY.IP.AD.RESS:8000/stream.mjpg -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/videoX
 ```
+
+### Using it
+Finally if you have everything installed you can follow these steps to use a convenient bash script to spin up your virtual camera client:
+1. Create a copy of the `enable_virtual_webcam.sh.template` file and rename it to `enable_virtual_webcam.sh`.
+2. Adjust the `STREAM_URL="http://MY.IP.AD.RESS:8000/stream.mjpg"` in the `enable_virtual_webcam.sh` script to match the IP address of the RPI to which your camera is physically connected.
+3. And then run the bash script:
+```
+chmod +x enable_virtual_webcam.sh
+./enable_virtual_webcam.sh
+```
+

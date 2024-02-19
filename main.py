@@ -26,7 +26,7 @@ def run(framerate, resolution, handler_class=StreamingHandler):
 
     # Start the camera stream
     camera_stream = CameraStream(framerate, resolution)
-    threading.Thread(target=camera_stream.capture_frames, daemon=True).start()
+    #threading.Thread(target=camera_stream.capture_frames, daemon=True).start()
 
     # Start the web service
     server_address = ('', 8000)

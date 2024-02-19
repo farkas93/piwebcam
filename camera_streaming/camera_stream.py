@@ -81,7 +81,7 @@ class CameraOutput(io.BufferedIOBase):
 
 class CameraStream:
     def __init__(self, framerate: float, resolution: tuple, edge_detection=False, face_detection=True):
-        self.freq = 1/framerate
+        self.framerate = framerate
 
         if face_detection:
             # Override users settings to make it work with resnet
@@ -101,5 +101,6 @@ class CameraStream:
         config = self.picam2.create_video_configuration()
         
         config['main']['size'] = self.res
+        config['main']['framerate'] = self.framerate
         self.picam2.configure(config)
-        logging.info(f"CAMERA CONFIGURED\nRES: {self.res}")
+        logging.info(f"CAMERA CONFIGURED\nRES: {self.res}\nFRAMERATE:{self.framerate}")

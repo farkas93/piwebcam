@@ -23,7 +23,7 @@ logging.basicConfig(level=log_level_mapping.get(log_level, logging.WARNING))
 
 
 def main():
-    framerate = 24.0
+    framerate = 10.0
     resolution = RES_480P
     run(framerate=framerate, resolution=resolution, handler_class=StreamingHandler)
 

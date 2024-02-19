@@ -25,8 +25,7 @@ logging.basicConfig(level=log_level_mapping.get(log_level, logging.WARNING))
 def run(framerate, resolution, handler_class=StreamingHandler):
 
     # Start the camera stream
-    camera_stream = CameraStream(framerate, resolution)
-    #threading.Thread(target=camera_stream.capture_frames, daemon=True).start()
+    camera_stream = CameraStream(framerate, resolution, edge_detection=True)
 
     # Start the web service
     server_address = ('', 8000)

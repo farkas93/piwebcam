@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import threading
 from threading import Condition
-from resolutions import *
+from .resolutions import *
 
 import logging
 

@@ -30,7 +30,7 @@ FROM bookworm-picamera2
 WORKDIR /root
 
 COPY requirements.txt /root/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 COPY camera_streaming /root/camera_streaming
 COPY facial_recognition/res10_300x300_ssd_iter_140000.caffemodel /root/camera_streaming/resnet.caffemodel

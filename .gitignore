@@ -1,4 +1,5 @@
 *.jpg
+enable_virtual_webcam.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

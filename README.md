@@ -4,3 +4,49 @@ I set up a docker container with the latest debian bookworm for using it with pi
 
 Credits to [hyzhak](https://github.com/hyzhak/pi-camera-in-docker/tree/main) for giving a good template on that matter.
 The main diference is that he is basing his container on bullseye.
+
+
+## Run this project on your PI
+
+
+
+## Use it on as Webcam on your machine
+
+
+### No blabla
+If you just want to use it, do following steps:
+1. Create a copy of the `enable_virtual_webcam.sh.template` file and rename it to `enable_virtual_webcam.sh`.
+2. Adjust the `STREAM_URL="http://MY.IP.AD.RESS:8000/stream.mjpg"` in the `enable_virtual_webcam.sh` script to match the IP address of the RPI to which your camera is physically connected.
+3. And then run the bash script:
+```
+chmod +x enable_virtual_webcam.sh
+./enable_virtual_webcam.sh
+```
+
+### How it is done
+
+The bash script is essentially following these steps.
+
+Install `v4l2loopbac`:
+
+```
+sudo apt-get update
+sudo apt-get install v4l2loopback-dkms
+```
+
+Load the `v4l2loopbac` module
+After installing, you need to load the module into the kernel:
+```
+sudo modprobe v4l2loopback
+```
+This command will create a new virtual video device on your system, typically /dev/videoX, where X is a number (like 0, 1, etc.). You can check the created device with ls /dev/video*.
+
+Then install `ffmpeg`:
+```
+sudo apt-get install ffmpeg
+```
+
+In the end stream your device with:
+```
+ffmpeg -i http://MY.IP.AD.RESS:8000/stream.mjpg -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/videoX
+```

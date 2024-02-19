@@ -27,4 +27,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY camera_streaming /root/camera_streaming
 COPY main.py /root/main.py
 
-CMD [ "python", "main.py" ]
+CMD [ "python3", "main.py" ]

@@ -7,7 +7,7 @@ This is a small project to let you use your rpi with your rpi camera module as a
 I set up a docker container with the latest debian bookworm for using it with picamera2 and open-cv.
 
 Credits to [hyzhak](https://github.com/hyzhak/pi-camera-in-docker/tree/main) for giving a good template on that matter.
-The main diference is that he is basing his container on bullseye.
+The main difference is that he is basing his container on bullseye.
 
 
 ## Run this project on your PI

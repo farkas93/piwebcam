@@ -3,7 +3,6 @@ import io
 import os
 import cv2
 import numpy as np
-import threading
 from threading import Condition
 from .resolutions import *
 
@@ -38,8 +37,13 @@ class CameraOutput(io.BufferedIOBase):
             self.condition.notify_all()
     
     def resnet_face_detection(self,buf):
+
+        # Convert the image buffer to a numpy array
+        img_array = np.frombuffer(buf, dtype=np.uint8)
+        # Decode the image array into an image
+        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
          # Prepare the frame to be fed to the network
-        blob = cv2.dnn.blobFromImage(buf, 1.0, (300, 300), (104.0, 177.0, 123.0))
+        blob = cv2.dnn.blobFromImage(img, 1.0, (300, 300), (104.0, 177.0, 123.0))
 
         # Set the input to the network
         self.net.setInput(blob)
@@ -57,8 +61,10 @@ class CameraOutput(io.BufferedIOBase):
                 # Draw the bounding box of the face along with the associated probability
                 text = "{:.2f}%".format(confidence * 100)
                 y = startY - 10 if startY - 10 > 10 else startY + 10
-                cv2.rectangle(buf, (startX, startY), (endX, endY), (0, 255, 0), 2)
-                cv2.putText(buf, text, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 2)
+                cv2.rectangle(img, (startX, startY), (endX, endY), (0, 255, 0), 2)
+                cv2.putText(img, text, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 2)
+
+        _, buf = cv2.imencode('.jpg', img)
         return buf.tobytes()
 
     def canny_edge_detector(self,buf):

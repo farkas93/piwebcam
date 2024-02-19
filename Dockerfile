@@ -27,14 +27,23 @@ RUN rm /usr/lib/python3.11/EXTERNALLY-MANAGED
 FROM bookworm-picamera2
 # Copy the code, install python packages and start the app
 
+# WORKDIR /root
+
+# # Install dlib
+# RUN git clone https://github.com/davisking/dlib
+
+# WORKDIR /root/dlib
+# RUN py -m pip install cmake
+# RUN py setup.py install
+
 WORKDIR /root
 
 COPY requirements.txt /root/requirements.txt
 RUN pip install -r requirements.txt
 
 COPY camera_streaming /root/camera_streaming
-COPY facial_recognition/res10_300x300_ssd_iter_140000.caffemodel /root/camera_streaming/resnet.caffemodel
-COPY facial_recognition/deploy.prototxt.txt /root/camera_streaming/deploy.prototxt
+COPY facial_recognition/res10_300x300_ssd_iter_140000.caffemodel /root/resnet.caffemodel
+COPY facial_recognition/deploy.prototxt.txt /root/deploy.prototxt
 COPY main.py /root/main.py
 
 CMD [ "python3", "main.py" ]

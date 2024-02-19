@@ -99,6 +99,7 @@ class CameraStream:
     def configure_camera(self):
         # Configure the camera here, e.g., resolution
         config = self.picam2.create_video_configuration()
+        logging.info(f"CONFIG looks like:\n{config}")
         config['controls']['FrameRate'] = self.framerate        
         config['main']['size'] = self.res
         self.picam2.configure(config)

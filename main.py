@@ -1,4 +1,3 @@
-import threading
 import logging
 import os
 
@@ -22,10 +21,16 @@ log_level_mapping = {
 
 logging.basicConfig(level=log_level_mapping.get(log_level, logging.WARNING))
 
+
+def main():
+    framerate = 24.0
+    resolution = RES_720P
+    run(framerate=framerate, resolution=resolution, handler_class=StreamingHandler)
+
 def run(framerate, resolution, handler_class=StreamingHandler):
 
     # Start the camera stream
-    camera_stream = CameraStream(framerate, resolution, edge_detection=True)
+    camera_stream = CameraStream(framerate, resolution, edge_detection=False)
 
     # Start the web service
     server_address = ('', 8000)
@@ -34,6 +39,4 @@ def run(framerate, resolution, handler_class=StreamingHandler):
     httpd.serve_forever()
 
 if __name__ == '__main__':
-    framerate = 24.0
-    resolution = RES_360P
-    run(framerate=framerate, resolution=resolution, handler_class=StreamingHandler)
+    main()

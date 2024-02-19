@@ -45,7 +45,7 @@ class CameraOutput(io.BufferedIOBase):
 
 
 class CameraStream:
-    def __init__(self, framerate: float, resolution: tuple, model_type=ModelType.HAARCASCADE, edge_detection=False):
+    def __init__(self, framerate: float, resolution: tuple, model_type=ModelType.MOBILENET, edge_detection=False):
         self.framerate = framerate
 
         if model_type == ModelType.RESNET or model_type == ModelType.MOBILENET:

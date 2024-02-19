@@ -17,12 +17,12 @@ class FaceDetector():
             modelFile = cwd + "/resnet/model.caffemodel"
             configFile = cwd + "/resnet/deploy.prototxt"
             self.net = cv2.dnn.readNetFromCaffe(configFile, modelFile)
-            self.detect = self._resnet_face_detection
+            self.detect = self._dnn_face_detection
         elif(model_type == ModelType.MOBILENET):
             modelFile = cwd + "/mobilenet_ssd/model.caffemodel"
             configFile = cwd + "/mobilenet_ssd/deploy.prototxt"
             self.net = cv2.dnn.readNetFromCaffe(configFile, modelFile)
-            self.detect = self._mobilenet_face_detection
+            self.detect = self._dnn_face_detection
         else:
             modelFile = cwd + '/cascades/haarcascade_frontalface_default.xml'
             self.cascade = cv2.CascadeClassifier(modelFile)
@@ -49,7 +49,7 @@ class FaceDetector():
         _, buf = cv2.imencode('.jpg', img)
         return buf.tobytes()
 
-    def _resnet_face_detection(self, buf):
+    def _dnn_face_detection(self, buf):
 
         # Convert the image buffer to a numpy array
         img_array = np.frombuffer(buf, dtype=np.uint8)
@@ -79,7 +79,3 @@ class FaceDetector():
 
         _, buf = cv2.imencode('.jpg', img)
         return buf.tobytes()
-
-    def _mobilenet_face_detection(self, buf):
-
-        pass

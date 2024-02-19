@@ -41,11 +41,14 @@ WORKDIR /root
 COPY requirements.txt /root/requirements.txt
 RUN pip install -r requirements.txt
 
-COPY camera_streaming /root/camera_streaming
-COPY facial_recognition/res10_300x300_ssd_iter_140000.caffemodel /root/resnet/resnet.caffemodel
+# Copy detector models to the container
+COPY facial_recognition/res10_300x300_ssd_iter_140000.caffemodel /root/resnet/model.caffemodel
 COPY facial_recognition/deploy.prototxt.txt /root/resnet/deploy.prototxt
 COPY facial_recognition/cascades /root/cascades
-COPY facial_recognition/mobilenet_ssd /root/mobilenet_ssd
+COPY facial_recognition/mobilenet_ssd/MobileNetSSD_deploy.caffemodel /root/mobilenet_ssd/model.caffemodel
+COPY facial_recognition/mobilenet_ssd/MobileNetSSD_deploy.prototxt /root/mobilenet_ssd/deploy.prototxt
+
+COPY camera_streaming /root/camera_streaming
 COPY main.py /root/main.py
 
 CMD [ "python3", "main.py" ]

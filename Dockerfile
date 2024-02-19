@@ -1,4 +1,4 @@
-FROM debian:bullseye AS bullseye-python
+FROM debian:bullseye AS bullseye-picamera2
 
 RUN apt update && apt install -y --no-install-recommends gnupg
 
@@ -15,10 +15,10 @@ RUN apt update && apt install -y --no-install-recommends \
      && rm -rf /var/cache/apt/archives/* \
      && rm -rf /var/lib/apt/lists/*
 
-FROM bullseye-python
+FROM bullseye-picamera2
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /root
 
 # Copy the requirements file
 COPY requirements.txt .
@@ -27,10 +27,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Python files
-COPY pi_camera_in_docker /app/pi_camera_in_docker
+COPY pi_camera_in_docker /root/pi_camera_in_docker
 
 # Set the entry point
-CMD ["python3", "/app/pi_camera_in_docker/main.py"]
+CMD ["python3", "/root/pi_camera_in_docker/main.py"]
 
 # # Install the python packages from the repo
 # RUN install_packages python3-pip

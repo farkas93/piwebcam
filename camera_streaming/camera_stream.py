@@ -22,13 +22,21 @@ class CameraOutput(io.BufferedIOBase):
         if model_type != None:
             self.face_detector = FaceDetector(model_type)
 
+    def read(self):
+        # Implement a read method to fetch the latest frame
+        with self.condition:
+            self.condition.wait_for(lambda: self.latest_frame is not None)
+            frame = self.latest_frame
+            self.latest_frame = None  # Reset the latest frame to ensure old frames are discarded
+            return frame        
+
     def write(self, buf):
         if self.face_detector != None:
             self.face_detector.detect(buf)
         if self.edge_detection:
             buf = self.canny_edge_detector(buf)
         with self.condition:
-            self.frame = buf
+            self.latest_frame = buf
             self.condition.notify_all()
     
     

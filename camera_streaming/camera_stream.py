@@ -24,7 +24,6 @@ class CameraOutput(io.BufferedIOBase):
 
     def read(self):
         with self.mutex:
-            self.mutex.wait()
             return self.latest_frame
 
     def write(self, buf):            
@@ -38,7 +37,6 @@ class CameraOutput(io.BufferedIOBase):
                     self.latest_frame = self.canny_edge_detector(self.latest_frame)
             finally:
                 self.mutex.release()
-                self.mutex.notify_all()
     
     def canny_edge_detector(self,buf):
         # Convert the image buffer to a numpy array

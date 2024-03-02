@@ -26,8 +26,7 @@ class CameraOutput(io.BufferedIOBase):
         # Implement a read method to fetch the latest frame
         with self.mutex:
             self.mutex.wait_for(lambda: self.latest_frame is not None)
-            current_frame = self.latest_frame
-            return current_frame
+            return self.latest_frame
 
     def write(self, buf):
         with self.mutex:

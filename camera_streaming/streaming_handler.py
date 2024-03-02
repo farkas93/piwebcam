@@ -50,6 +50,7 @@ class StreamingHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         camera_output = self.server.camera_stream.output
+        frequency = 1.0/self.server.camera_stream.framerate
         if self.path == '/':
             self.send_response(301)
             self.send_header('Location', '/index.html')
@@ -75,6 +76,7 @@ class StreamingHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(frame)
                     self.wfile.write(b'\r\n')
+                    time.sleep(frequency)
             except Exception as e:
                 logging.warning(
                     'Removed streaming client %s: %s',

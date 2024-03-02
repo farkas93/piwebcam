@@ -16,22 +16,13 @@ from picamera2.outputs import FileOutput
 class CameraOutput(io.BufferedIOBase):
     def __init__(self, img_size, model_type = None, edge_detection=False):
         self.mutex = Condition()
-        self.write_pending = False  # Flag to indicate a pending write operation
-        self.read_pending = True
+        self.read_pending = False
         self.edge_detection = edge_detection
         self.face_detector = None
-        self.current_frame = self.init_current_frame(img_size=img_size)
         self.latest_frame = None
         if model_type != None:
             self.face_detector = FaceDetector(model_type)
 
-    def init_current_frame(self, img_size):
-        """
-        Inititalize the current frame to be black.
-        """
-        black_img = np.zeros(img_size, dtype=np.uint8)
-        _, buf = cv2.imencode('.jpg', black_img)
-        return buf.tobytes()
 
 
     def ready_to_read(self):

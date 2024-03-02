@@ -19,8 +19,6 @@ class CameraOutput(io.BufferedIOBase):
         self.edge_detection = edge_detection
         self.face_detector = None
         self.latest_frame = None
-        self.readers_waiting = 0
-        self.readers_updated = 0
         if model_type != None:
             self.face_detector = FaceDetector(model_type)
 
@@ -39,8 +37,8 @@ class CameraOutput(io.BufferedIOBase):
                 if self.edge_detection:
                     self.latest_frame = self.canny_edge_detector(self.latest_frame)
             finally:
-                self.mutex.notify_all()
                 self.mutex.release()
+                self.mutex.notify_all()
     
     def canny_edge_detector(self,buf):
         # Convert the image buffer to a numpy array

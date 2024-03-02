@@ -2,7 +2,7 @@ import time
 import io
 import cv2
 import numpy as np
-from threading import Condition
+from threading import Condition, Lock
 from .resolutions import *
 from .face_recognition import ModelType, FaceDetector
 
@@ -14,30 +14,48 @@ from picamera2.outputs import FileOutput
 
 
 class CameraOutput(io.BufferedIOBase):
-    def __init__(self, model_type = None, edge_detection=False):
-        self.frame = None
-        self.condition = Condition()
+    def __init__(self, img_size, model_type = None, edge_detection=False):
+        self.mutex = Lock()
+        self.write_pending = False  # Flag to indicate a pending write operation
         self.edge_detection = edge_detection
         self.face_detector = None
+        self.current_frame = self.init_current_frame(img_size=img_size)
+        self.latest_frame = None
         if model_type != None:
             self.face_detector = FaceDetector(model_type)
 
+    def init_current_frame(self, img_size):
+        """
+        Inititalize the current frame to be black.
+        """
+        black_img = np.zeros(img_size, dtype=np.uint8)
+        _, buf = cv2.imencode('.jpg', black_img)
+        return buf.tobytes()
+
+
     def read(self):
         # Implement a read method to fetch the latest frame
-        with self.condition:
-            self.condition.wait_for(lambda: self.latest_frame is not None)
-            frame = self.latest_frame
-            self.latest_frame = None  # Reset the latest frame to ensure old frames are discarded
-            return frame        
+        mutex_available = self.mutex.acquire(blocking=False)
+        try:
+            if mutex_available and not self.write_pending:
+                if self.latest_frame is not None:
+                    new_frame = self.latest_frame
+                    if self.face_detector != None:
+                        new_frame =  self.face_detector.detect(self.latest_frame)
+                    if self.edge_detection:
+                        new_frame = self.canny_edge_detector(self.latest_frame)
+                    self.current_frame = new_frame
+                    self.latest_frame = None  # Reset the latest frame to ensure old frames are discarded
+        finally:
+            if mutex_available:
+                self.mutex.release()
+        return self.current_frame        
 
     def write(self, buf):
-        if self.face_detector != None:
-            self.face_detector.detect(buf)
-        if self.edge_detection:
-            buf = self.canny_edge_detector(buf)
-        with self.condition:
+        self.write_pending = True  # Indicate a write operation is pending
+        with self.mutex:
             self.latest_frame = buf
-            self.condition.notify_all()
+            self.flush() # To increase the likelihood that the next frame processed is a recent one. 
     
     
     def canny_edge_detector(self,buf):
@@ -64,7 +82,7 @@ class CameraStream:
 
         self.picam2 = Picamera2()
         self.configure_camera()
-        self.output = CameraOutput(model_type, edge_detection)
+        self.output = CameraOutput(resolution + (3,), model_type, edge_detection)
         self.picam2.start_recording(JpegEncoder(), FileOutput(self.output))
         logging.info("STARTING CAM")
 

@@ -64,7 +64,6 @@ class CameraOutput(io.BufferedIOBase):
         finally:
             if mutex_available:
                 self.mutex.release()
-        self.flush() # To increase the likelihood that the next frame processed is a recent one. 
     
     
     def canny_edge_detector(self,buf):

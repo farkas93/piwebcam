@@ -36,7 +36,6 @@ class CameraOutput(io.BufferedIOBase):
                     self.latest_frame =  self.face_detector.detect(self.latest_frame)
                 if self.edge_detection:
                     self.latest_frame = self.canny_edge_detector(self.latest_frame)
-                self.mutex.notify_all()
             finally:
                 # Always release the lock when you're done
                 self.mutex.release()

@@ -35,7 +35,7 @@ class CameraOutput(io.BufferedIOBase):
             if self.readers_waiting == 0 and self.readers_updated > 0:
                 self.readers_updated = 0
                 # Signal to writer that all readers have been updated
-                self.condition.notify_all()
+                self.mutex.notify_all()
 
             return self.latest_frame
 
@@ -52,7 +52,7 @@ class CameraOutput(io.BufferedIOBase):
                 self.mutex.wait()
 
             # Notify all waiting readers that a new frame is available
-            self.condition.notify_all()
+            self.mutex.notify_all()
     
     def canny_edge_detector(self,buf):
         # Convert the image buffer to a numpy array

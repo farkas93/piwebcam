@@ -15,7 +15,7 @@ from picamera2.outputs import FileOutput
 
 class CameraOutput(io.BufferedIOBase):
     def __init__(self, img_size, model_type = None, edge_detection=False):
-        self.mutex = Condition()
+        self.mutex = Lock()
         self.edge_detection = edge_detection
         self.face_detector = None
         self.latest_frame = None
@@ -25,7 +25,6 @@ class CameraOutput(io.BufferedIOBase):
     def read(self):
         # Implement a read method to fetch the latest frame
         with self.mutex:
-            self.mutex.wait_for(lambda: self.latest_frame is not None)
             return self.latest_frame
 
     def write(self, buf):

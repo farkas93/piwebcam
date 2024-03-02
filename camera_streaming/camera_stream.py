@@ -15,7 +15,7 @@ from picamera2.outputs import FileOutput
 
 class CameraOutput(io.BufferedIOBase):
     def __init__(self, img_size, model_type = None, edge_detection=False):
-        self.mutex = Lock()
+        self.mutex = Condition()
         self.write_pending = False  # Flag to indicate a pending write operation
         self.read_pending = True
         self.edge_detection = edge_detection
@@ -39,28 +39,28 @@ class CameraOutput(io.BufferedIOBase):
 
     def read(self):
         # Implement a read method to fetch the latest frame
-        if not self.write_pending:
-            start = time.time()
-            with self.mutex:
-                if self.latest_frame is not None:
-                    if self.face_detector != None:
-                        self.latest_frame =  self.face_detector.detect(self.latest_frame)
-                    if self.edge_detection:
-                        self.latest_frame = self.canny_edge_detector(self.latest_frame)
-                    current_frame = self.latest_frame
-                    self.latest_frame = None #Be sure we do not compute on the same frame twice
-                self.read_pending = False
-                logging.info(f"TIC {time.time() - start}")
-                return current_frame
+        start = time.time()
+        with self.mutex:
+            self.mutex.wait_for(lambda: self.latest_frame is not None)
+
+            if self.face_detector != None:
+                self.latest_frame =  self.face_detector.detect(self.latest_frame)
+            if self.edge_detection:
+                self.latest_frame = self.canny_edge_detector(self.latest_frame)
+
+            current_frame = self.latest_frame
+            self.latest_frame = None #Be sure we do not compute on the same frame twice
+            self.read_pending = False
+            logging.info(f"TIC {time.time() - start}")
+            return current_frame
 
     def write(self, buf):
         if not self.read_pending:
-            start = time.time()
-            self.write_pending = True  # Indicate a write operation is pending        
+            start = time.time()     
             with self.mutex:
                 self.latest_frame = buf
                 self.read_pending = True
-                self.write_pending = False
+                self.mutex.notify_all()
             logging.info(f"TOC {time.time() - start}")
     
     def canny_edge_detector(self,buf):

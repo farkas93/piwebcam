@@ -40,7 +40,7 @@ class CameraOutput(io.BufferedIOBase):
     def read(self):
         # Implement a read method to fetch the latest frame
         if not self.write_pending:
-            logging.info("TIC")
+            start = time.time()
             with self.mutex:
                 if self.latest_frame is not None:
                     if self.face_detector != None:
@@ -50,17 +50,18 @@ class CameraOutput(io.BufferedIOBase):
                     current_frame = self.latest_frame
                     self.latest_frame = None #Be sure we do not compute on the same frame twice
                 self.read_pending = False
+                logging.info(f"TIC {time.time() - start}")
                 return current_frame
 
     def write(self, buf):
         if not self.read_pending:
-            logging.info("TOC")
+            start = time.time()
             self.write_pending = True  # Indicate a write operation is pending        
             with self.mutex:
                 self.latest_frame = buf
                 self.read_pending = True
                 self.write_pending = False
-    
+            logging.info(f"TOC {time.time() - start}")
     
     def canny_edge_detector(self,buf):
         # Convert the image buffer to a numpy array

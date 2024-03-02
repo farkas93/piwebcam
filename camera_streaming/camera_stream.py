@@ -40,6 +40,7 @@ class CameraOutput(io.BufferedIOBase):
     def read(self):
         # Implement a read method to fetch the latest frame
         if not self.write_pending:
+            logging.info("TIC")
             with self.mutex:
                 if self.latest_frame is not None:
                     if self.face_detector != None:
@@ -53,6 +54,7 @@ class CameraOutput(io.BufferedIOBase):
 
     def write(self, buf):
         if not self.read_pending:
+            logging.info("TOC")
             self.write_pending = True  # Indicate a write operation is pending        
             with self.mutex:
                 self.latest_frame = buf

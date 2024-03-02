@@ -29,13 +29,18 @@ class CameraOutput(io.BufferedIOBase):
             return self.latest_frame
 
     def write(self, buf):
-        with self.mutex:
-            self.latest_frame = buf
-            if self.face_detector != None:
-                self.latest_frame =  self.face_detector.detect(self.latest_frame)
-            if self.edge_detection:
-                self.latest_frame = self.canny_edge_detector(self.latest_frame)
-            self.mutex.notify_all()
+        acquired = self.mutex.acquire(blocking=False)
+        if acquired:
+            try:                
+                self.latest_frame = buf
+                if self.face_detector != None:
+                    self.latest_frame =  self.face_detector.detect(self.latest_frame)
+                if self.edge_detection:
+                    self.latest_frame = self.canny_edge_detector(self.latest_frame)
+                self.mutex.notify_all()
+            finally:
+                # Always release the lock when you're done
+                self.mutex.release()
     
     def canny_edge_detector(self,buf):
         # Convert the image buffer to a numpy array

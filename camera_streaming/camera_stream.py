@@ -40,12 +40,11 @@ class CameraOutput(io.BufferedIOBase):
         try:
             if mutex_available and not self.write_pending:
                 if self.latest_frame is not None:
-                    new_frame = self.latest_frame
                     if self.face_detector != None:
-                        new_frame =  self.face_detector.detect(self.latest_frame)
+                        self.latest_frame =  self.face_detector.detect(self.latest_frame)
                     if self.edge_detection:
-                        new_frame = self.canny_edge_detector(self.latest_frame)
-                    self.current_frame = new_frame
+                        self.latest_frame = self.canny_edge_detector(self.latest_frame)
+                    self.current_frame = self.latest_frame
                     self.latest_frame = None  # Reset the latest frame to ensure old frames are discarded
                 self.read_pending = False
         finally:

@@ -26,33 +26,21 @@ class CameraOutput(io.BufferedIOBase):
 
     def read(self):
         with self.mutex:
-            self.readers_waiting += 1
-            self.mutex.wait()  # Wait for a signal that a new frame is available
-            self.readers_waiting -= 1
-            self.readers_updated += 1
-            
-            # Check if all waiting readers have been updated
-            if self.readers_waiting == 0 and self.readers_updated > 0:
-                self.readers_updated = 0
-                # Signal to writer that all readers have been updated
-                self.mutex.notify_all()
-
+            self.mutex.wait()
             return self.latest_frame
 
-    def write(self, buf):
-        with self.mutex:
-            self.latest_frame = buf
-            if self.face_detector is not None:
-                self.latest_frame = self.face_detector.detect(self.latest_frame)
-            if self.edge_detection:
-                self.latest_frame = self.canny_edge_detector(self.latest_frame)
-
-            # Wait until all readers have been updated before writing again
-            while self.readers_updated > 0:
-                self.mutex.wait()
-
-            # Notify all waiting readers that a new frame is available
-            self.mutex.notify_all()
+    def write(self, buf):            
+        acquired = self.mutex.acquire(blocking=False)
+        if acquired:
+            try:
+                self.latest_frame = buf
+                if self.face_detector != None:
+                    self.latest_frame =  self.face_detector.detect(self.latest_frame)
+                if self.edge_detection:
+                    self.latest_frame = self.canny_edge_detector(self.latest_frame)
+            finally:
+                self.mutex.notify_all()
+                self.mutex.release()
     
     def canny_edge_detector(self,buf):
         # Convert the image buffer to a numpy array

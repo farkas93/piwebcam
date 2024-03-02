@@ -17,6 +17,7 @@ class CameraOutput(io.BufferedIOBase):
     def __init__(self, img_size, model_type = None, edge_detection=False):
         self.mutex = Lock()
         self.write_pending = False  # Flag to indicate a pending write operation
+        self.read_pending = False
         self.edge_detection = edge_detection
         self.face_detector = None
         self.current_frame = self.init_current_frame(img_size=img_size)
@@ -46,16 +47,25 @@ class CameraOutput(io.BufferedIOBase):
                         new_frame = self.canny_edge_detector(self.latest_frame)
                     self.current_frame = new_frame
                     self.latest_frame = None  # Reset the latest frame to ensure old frames are discarded
+                self.read_pending = False
         finally:
             if mutex_available:
                 self.mutex.release()
         return self.current_frame        
 
     def write(self, buf):
-        self.write_pending = True  # Indicate a write operation is pending
-        with self.mutex:
+        if not self.read_pending:
+            self.write_pending = True  # Indicate a write operation is pending
+        
+        mutex_available = self.mutex.acquire(blocking=False)
+        try:
             self.latest_frame = buf
-            self.flush() # To increase the likelihood that the next frame processed is a recent one. 
+            self.read_pending = True
+            self.write_pending = False
+        finally:
+            if mutex_available:
+                self.mutex.release()
+        self.flush() # To increase the likelihood that the next frame processed is a recent one. 
     
     
     def canny_edge_detector(self,buf):

@@ -17,7 +17,7 @@ class CameraOutput(io.BufferedIOBase):
     def __init__(self, img_size, model_type = None, edge_detection=False):
         self.mutex = Lock()
         self.write_pending = False  # Flag to indicate a pending write operation
-        self.read_pending = False
+        self.read_pending = True
         self.edge_detection = edge_detection
         self.face_detector = None
         self.current_frame = self.init_current_frame(img_size=img_size)
@@ -34,36 +34,30 @@ class CameraOutput(io.BufferedIOBase):
         return buf.tobytes()
 
 
+    def ready_to_read(self):
+        return self.read_pending
+
     def read(self):
         # Implement a read method to fetch the latest frame
         if not self.write_pending:
-            mutex_available = self.mutex.acquire(blocking=False)
-            try:
-                if mutex_available:
-                    if self.latest_frame is not None:
-                        if self.face_detector != None:
-                            self.latest_frame =  self.face_detector.detect(self.latest_frame)
-                        if self.edge_detection:
-                            self.latest_frame = self.canny_edge_detector(self.latest_frame)
-                        self.current_frame = self.latest_frame
-                        self.latest_frame = None  # Reset the latest frame to ensure old frames are discarded
-                    self.read_pending = False
-            finally:
-                if mutex_available:
-                    self.mutex.release()
-        return self.current_frame        
+            with self.mutex:
+                if self.latest_frame is not None:
+                    if self.face_detector != None:
+                        self.latest_frame =  self.face_detector.detect(self.latest_frame)
+                    if self.edge_detection:
+                        self.latest_frame = self.canny_edge_detector(self.latest_frame)
+                    current_frame = self.latest_frame
+                    self.latest_frame = None #Be sure we do not compute on the same frame twice
+                self.read_pending = False
+                return current_frame
 
     def write(self, buf):
         if not self.read_pending:
             self.write_pending = True  # Indicate a write operation is pending        
-            mutex_available = self.mutex.acquire(blocking=False)
-            try:
+            with self.mutex:
                 self.latest_frame = buf
                 self.read_pending = True
                 self.write_pending = False
-            finally:
-                if mutex_available:
-                    self.mutex.release()
     
     
     def canny_edge_detector(self,buf):

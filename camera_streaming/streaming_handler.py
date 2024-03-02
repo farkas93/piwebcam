@@ -68,12 +68,13 @@ class StreamingHandler(BaseHTTPRequestHandler):
             self.end_headers()
             try:
                 while True:
-                    frame = camera_output.read()
+                    if camera_output.ready_to_read():
+                        self.frame = camera_output.read()
                     self.wfile.write(b'--FRAME\r\n')
                     self.send_header('Content-Type', 'image/jpeg')
-                    self.send_header('Content-Length', len(frame))
+                    self.send_header('Content-Length', len(self.frame))
                     self.end_headers()
-                    self.wfile.write(frame)
+                    self.wfile.write(self.frame)
                     self.wfile.write(b'\r\n')
             except Exception as e:
                 logging.warning(

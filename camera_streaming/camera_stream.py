@@ -15,30 +15,44 @@ from picamera2.outputs import FileOutput
 
 class CameraOutput(io.BufferedIOBase):
     def __init__(self, img_size, model_type = None, edge_detection=False):
-        self.mutex = Lock()
+        self.mutex = Condition()
         self.edge_detection = edge_detection
         self.face_detector = None
         self.latest_frame = None
+        self.readers_waiting = 0
+        self.readers_updated = 0
         if model_type != None:
             self.face_detector = FaceDetector(model_type)
 
     def read(self):
-        # Implement a read method to fetch the latest frame
         with self.mutex:
+            self.readers_waiting += 1
+            self.mutex.wait()  # Wait for a signal that a new frame is available
+            self.readers_waiting -= 1
+            self.readers_updated += 1
+            
+            # Check if all waiting readers have been updated
+            if self.readers_waiting == 0 and self.readers_updated > 0:
+                self.readers_updated = 0
+                # Signal to writer that all readers have been updated
+                self.condition.notify_all()
+
             return self.latest_frame
 
     def write(self, buf):
-        acquired = self.mutex.acquire(blocking=False)
-        if acquired:
-            try:                
-                self.latest_frame = buf
-                if self.face_detector != None:
-                    self.latest_frame =  self.face_detector.detect(self.latest_frame)
-                if self.edge_detection:
-                    self.latest_frame = self.canny_edge_detector(self.latest_frame)
-            finally:
-                # Always release the lock when you're done
-                self.mutex.release()
+        with self.mutex:
+            self.latest_frame = buf
+            if self.face_detector is not None:
+                self.latest_frame = self.face_detector.detect(self.latest_frame)
+            if self.edge_detection:
+                self.latest_frame = self.canny_edge_detector(self.latest_frame)
+
+            # Wait until all readers have been updated before writing again
+            while self.readers_updated > 0:
+                self.mutex.wait()
+
+            # Notify all waiting readers that a new frame is available
+            self.condition.notify_all()
     
     def canny_edge_detector(self,buf):
         # Convert the image buffer to a numpy array

@@ -1,6 +1,5 @@
 from http.server import HTTPServer
 from socketserver import ThreadingMixIn
-import threading
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     """Handle requests in a separate thread."""

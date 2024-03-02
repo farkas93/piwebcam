@@ -16,43 +16,27 @@ from picamera2.outputs import FileOutput
 class CameraOutput(io.BufferedIOBase):
     def __init__(self, img_size, model_type = None, edge_detection=False):
         self.mutex = Condition()
-        self.read_pending = False
         self.edge_detection = edge_detection
         self.face_detector = None
         self.latest_frame = None
         if model_type != None:
             self.face_detector = FaceDetector(model_type)
 
-
-
-    def ready_to_read(self):
-        return self.read_pending
-
     def read(self):
         # Implement a read method to fetch the latest frame
-        start = time.time()
         with self.mutex:
             self.mutex.wait_for(lambda: self.latest_frame is not None)
+            current_frame = self.latest_frame
+            return current_frame
 
+    def write(self, buf):
+        with self.mutex:
+            self.latest_frame = buf
             if self.face_detector != None:
                 self.latest_frame =  self.face_detector.detect(self.latest_frame)
             if self.edge_detection:
                 self.latest_frame = self.canny_edge_detector(self.latest_frame)
-
-            current_frame = self.latest_frame
-            self.latest_frame = None #Be sure we do not compute on the same frame twice
-            self.read_pending = False
-            logging.info(f"TIC {time.time() - start}")
-            return current_frame
-
-    def write(self, buf):
-        if not self.read_pending:
-            start = time.time()     
-            with self.mutex:
-                self.latest_frame = buf
-                self.read_pending = True
-                self.mutex.notify_all()
-            logging.info(f"TOC {time.time() - start}")
+            self.mutex.notify_all()
     
     def canny_edge_detector(self,buf):
         # Convert the image buffer to a numpy array
